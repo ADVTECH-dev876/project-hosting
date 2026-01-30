@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Projects Hub</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #020617;
+      --bg-tertiary: #111827;
+      --border-color: #1f2937;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+      --accent-green: #22c55e;
+      --accent-green-hover: #16a34a;
+      --accent-blue: #2563eb;
+      --card-shadow: 0 4px 12px rgba(15, 23, 42, 0.7);
+      --transition: all 0.3s ease;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f9fafb;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #ffffff;
+      --border-color: #e5e7eb;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --accent-green: #10b981;
+      --accent-green-hover: #0da271;
+      --accent-blue: #3b82f6;
+      --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      transition: var(--transition);
+      line-height: 1.5;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px 15px;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    header h1 {
+      margin-bottom: 5px;
+      font-size: 2.2rem;
+      background: linear-gradient(45deg, #2563eb, #8b5cf6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 800;
+    }
+
+    .stats {
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 24px;
+      cursor: pointer;
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      z-index: 20;
+      padding: 5px;
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+
+    .menu-btn:hover {
+      background: var(--border-color);
+      transform: scale(1.1);
+    }
+
+    .theme-btn {
+      background: var(--border-color);
+      color: var(--text-primary);
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      transition: var(--transition);
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .theme-btn:hover {
+      transform: rotate(20deg) scale(1.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="light"] .theme-btn {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .search-container {
+      max-width: 1100px;
+      margin: 20px auto;
+      padding: 0 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    #searchInput {
+      padding: 12px 20px;
+      border-radius: 50px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      width: 100%;
+      max-width: 500px;
+      font-size: 16px;
+      transition: var(--transition);
+    }
+
+    #searchInput:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    #categoryFilter {
+      padding: 12px 20px;
+      border-radius: 50px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    #categoryFilter:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    [data-theme="light"] #searchInput,
+    [data-theme="light"] #categoryFilter {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+    }
+
+    .top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 15px;
+      background: var(--bg-secondary);
+      position: sticky;
+      top: 0;
+      z-index: 15;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .top-nav a {
+      color: var(--text-primary);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 50px;
+      background: var(--border-color);
+      font-size: 15px;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .top-nav a:hover {
+      background: var(--accent-blue);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .top-nav a::before {
+      content: "•";
+      font-size: 20px;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 10px auto 40px;
+      padding: 0 15px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .project-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      border-color: var(--accent-blue);
+    }
+
+    .project-preview {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, var(--border-color), var(--bg-tertiary));
+      border-radius: 12px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .project-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .project-card:hover .project-preview img {
+      transform: scale(1.08);
+    }
+
+    .project-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .project-card h2::after {
+      content: "";
+      display: block;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+      border-radius: 3px;
+      flex-grow: 1;
+      margin-left: 10px;
+    }
+
+    .project-card p {
+      font-size: 15px;
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .tag {
+      background: var(--border-color);
+      color: var(--text-secondary);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: var(--transition);
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .btn-primary {
+      background: var(--accent-green);
+      color: var(--bg-secondary);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-green-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: #374151;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    [data-theme="light"] .btn-secondary {
+      background: #d1d5db;
+      color: #1f2937;
+    }
+
+    [data-theme="light"] .btn-secondary:hover {
+      background: #9ca3af;
+    }
+
+    footer {
+      text-align: center;
+      padding: 18px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      margin-top: 20px;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: var(--accent-green);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      transform: translateX(400px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast::before {
+      content: "✓";
+      font-size: 20px;
+    }
+
+    /* Mobile Menu */
+    @media (max-width: 768px) {
+      .menu-btn {
+        display: block;
+      }
+
+      .top-nav {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        flex-direction: column;
+        height: 100vh;
+        width: 280px;
+        padding-top: 80px;
+        transition: left 0.4s ease;
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+        z-index: 25;
+      }
+
+      .top-nav.mobile-open {
+        left: 0;
+      }
+
+      .top-nav a {
+        width: 100%;
+        padding: 14px 20px;
+        border-radius: 0;
+        text-align: center;
+        font-size: 18px;
+      }
+
+      .search-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .project-card {
+        padding: 18px;
+      }
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    /* Category Icons */
+    .category-icon {
+      font-weight: bold;
+      margin-right: 4px;
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <button id="themeToggle" class="theme-btn" aria-label="Toggle dark mode">🌙</button>
+  <button id="menuToggle" class="menu-btn" aria-label="Toggle menu">☰</button>
+  
+  <header>
+    <h1>🚀 My Projects Hub</h1>
+    <p>Handcrafted web applications & games</p>
+    <div class="stats">
+      <span>📦 <span id="projectCount">0</span> projects</span>
+      <span>📅 Updated: <span id="lastUpdated"></span></span>
+    </div>
+  </header>
+
+  <nav class="top-nav" id="mainNav">
+    <a href="#photo">Photo Algo</a>
+    <a href="#ecom">E‑Commerce</a>
+    <a href="#vote">Vote App</a>
+    <a href="#grid">Number Grid</a>
+    <a href="#portal">Portal</a>
+    <a href="#todo">To‑Do</a>
+    <a href="#car">Car Game</a>
+    <a href="#animal">Animal Shooter</a>
+  </nav>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="🔍 Search projects..." aria-label="Search projects">
+    <select id="categoryFilter" aria-label="Filter by category">
+      <option value="all">🕗 All Categories</option>
+      <option value="tool">🛠️ Tools</option>
+      <option value="app">📱 Apps</option>
+      <option value="game">🎮 Games</option>
+    </select>
+  </div>
+
+  <main>
+    <!-- Photo Algo -->
+    <section id="photo" class="project-card" data-category="tool" data-tags="image,algorithm,processing">
+      <div class="project-preview">
+        <img src="https://via.placeholder.com/400x225/1e293b/64748b?text=Photo+Algo" 
+             alt="Photo Algo screenshot" 
+             onerror="this.src='https://via.placeholder.com/400x225/1e293b/64748b?text=Image+Processing'">
+      </div>
+      <h2><span class="category-icon">🛠️</span> Photo Algo</h2>
+      <p>Image manipulation algorithms demo with real-time filters and transformations.</p>
+      <div class="tags">
+        <span class="tag">Image Processing</span>
+        <span class="tag">Algorithms</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="openApp('https://photo-algo-git-main-advs-projects-b750f180.vercel.app/')">
+          <span>🚀</span> Open App
+        </button>
+        <button class="btn btn-secondary" onclick="copyUrl('https://photo-algo-git-main-advs-projects-b750f180.vercel.app/')">
+          <span>🔗</span> Copy Link
+        </button>
+      </div>
+    </section>
+
+    <!-- E‑Commerce -->
+    <section id="ecom" class="project-card" data-category="app" data-tags="ecommerce,shopping,ui">
+      <div class="project-preview">
+        <img src="https://via.placeholder.com/400x225/1e293b/64748b?text=E-Commerce+Store" 
+             alt="E-Commerce Store screenshot" 
+             onerror="this.src='https://via.placeholder.com/400x225/1e293b/64748b?text=Shopping+UI'">
+      </div>
+      <h2><span class="category-icon">📱</span> E‑Commerce Store</h2>
+      <p>Modern electronics shopping interface with cart functionality and responsive design.</p>
+      <div class="tags">
+        <span class="tag">E-Commerce</span>
+        <span class="tag">UI/UX</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="openApp('https://e-electronic-ecommerece.vercel.app/')">
+          <span>🛒</span> Open App
+        </button>
+        <button class="btn btn-secondary" onclick="copyUrl('https://e-electronic-ecommerece.vercel.app/')">
+          <span>🔗</span> Copy Link
+        </button>
+      </div>
+    </section>
+
+    <!-- Vote App -->
+    <section id="vote" class="project-card" data-category="app" data-tags="voting,poll,realtime">
+      <div class="project-preview">
+        <img src="https://via.placeholder.com/400x225/1e293b/64748b?text=Vote+App" 
+             alt="Vote App screenshot" 
+             onerror="this.src='https://via.placeholder.com/400x225/1e293b/64748b?text=Voting+System'">
+      </div>
+      <h2><span class="category-icon">📱</span> Vote App</h2>
+      <p>Real-time voting application with results visualization and user authentication.</p>
+      <div class="tags">
+        <span class="tag">Voting System</span>
+        <span class="tag">Real-time</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="openApp('https://voteapp-git-main-advs-projects-b750f180.vercel.app/')">
+          <span>🗳️</span> Open App
+        </button>
+        <button class="btn btn-secondary" onclick="copyUrl('https://voteapp-git-main-advs-projects-b750f180.vercel.app/')">
+          <span>🔗</span> Copy Link
+        </button>
+      </div>
+    </section>
+
+    <!-- Number Grid -->
+    <section id="grid" class="project-card" data-category="game" data-tags="puzzle,logic,grid">
+      <div class="project-preview">
+        <img src="https://via.placeholder.com/400x225/1e293b/64748b?text=Number+Grid" 
+             alt="Number Grid screenshot" 
+             onerror="this.src='https://via.placeholder.com/400x225/1e293b/64748b?text=Puzzle+Game'">
+      </div>
+      <h2><span class="category-icon">🎮</span> Number Grid</h2>
+      <p>Challenging number puzzle game with multiple difficulty levels and timer.</p>
+      <div class="tags">
+        <span class="tag">Puzzle</span>
+        <span class="tag">Logic Game</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="openApp('https://number-grid-alpha.vercel.app/')">
+          <span>🧩</span> Open App
+        </button>
+        <button class="btn btn-secondary" onclick="copyUrl('https://number-grid-alpha.vercel.app/')">
+          <span>🔗</span> Copy Link
+        </button>
+      </div>
+    </section>
+
+    <!-- Portal -->
+    <section id="portal" class="project-card" data-category="app" data-tags="navigation,ui,portal">
+      <div class="project-preview">
+        <img src="https://via.placeholder.com/400x225/1e293b/64748b?text=Portal+UI" 
+             alt="Portal screenshot" 
+             onerror="this.src='https://via.placeholder.com/400x225/1e293b/64748b?text=Navigation+UI'">
+      </div>
+      <h2><span class="category-icon">📱</span> Portal</h2>
+      <p>Modern portal interface with smooth animations and intuitive navigation patterns.</p>
+      <div class="tags">
+        <span class="tag">UI Design</span>
+        <span class="tag">Navigation</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="openApp('https://portal-git-main-advs-projects-b750f180.vercel.app/')">
+          <span>🚪</span> Open App
+        </button>
+        <button class="btn btn-secondary" onclick="copyUrl('https://portal-git-main-advs-projects-b750f180.vercel.app/')">
+          <span>🔗</span> Copy Link
+        </button>
+      </div>
+    </section>
+
+    <!-- To‑Do -->
+    <section id="todo" class="project-card" data-category="app" data-tags="productivity,tasks,management">
+      <div class="project-preview">
+        <img src="https://via.placeholder.com/400x225/1e293b/64748b?text=To-Do+App" 
+             alt="To-Do App screenshot" 
+             onerror="this.src='https://via.placeholder.com/400x225/1e293b/64748b?text=Task+Manager'">
+      </div>
+      <h2><span class="category-icon">📱</span> To‑Do App</h2>
+      <p>Task management application with drag-and-drop interface and local storage persistence.</p>
+      <div class="tags">
+        <span class="tag">Productivity</span>
+        <span class="tag">Task Manager</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="openApp('https://to-do-topaz-chi.vercel.app/')">
+          <span>✅</span> Open App
+        </button>
+        <button class="btn btn-secondary" onclick="copyUrl('https://to-do-topaz-chi.vercel.app/')">
+          <span>🔗</span> Copy Link
+        </button>
+      </div>
+    </section>
+
+    <!-- Car Game -->
+    <section id="car" class="project-card" data-category="game" data-tags="racing,arcade,driving">
+      <div class="project-preview">
+        <img src="https://via.placeholder.com/400x225/1e293b/64748b?text=Car+Game" 
+             alt="Car Game screenshot" 
+             onerror="this.src='https://via.placeholder.com/400x225/1e293b/64748b?text=Racing+Game'">
+      </div>
+      <h2><span class="category-icon">🎮</span> Car Game</h2>
+      <p>Fast-paced browser racing game with obstacles, score tracking, and responsive controls.</p>
+      <div class="tags">
+        <span class="tag">Racing Game</span>
+        <span class="tag">Arcade</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="openApp('https://car-games-chi.vercel.app/')">
+          <span>🏎️</span> Open App
+        </button>
+        <button class="btn btn-secondary" onclick="copyUrl('https://car-games-chi.vercel.app/')">
+          <span>🔗</span> Copy Link
+        </button>
+      </div>
+    </section>
+
+    <!-- Animal Shooter -->
+    <section id="animal" class="project-card" data-category="game" data-tags="shooter,action,animals">
+      <div class="project-preview">
+        <img src="https://via.placeholder.com/400x225/1e293b/64748b?text=Animal+Shooter" 
+             alt="Animal Shooter screenshot" 
+             onerror="this.src='https://via.placeholder.com/400x225/1e293b/64748b?text=Shooting+Game'">
+      </div>
+      <h2><span class="category-icon">🎮</span> Animal Shooter</h2>
+      <p>Action-packed shooting game featuring animal characters with sound effects and scoring.</p>
+      <div class="tags">
+        <span class="tag">Shooter</span>
+        <span class="tag">Action Game</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="openApp('https://animalshooter-git-main-advs-projects-b750f180.vercel.app/')">
+          <span>🎯</span> Open App
+        </button>
+        <button class="btn btn-secondary" onclick="copyUrl('https://animalshooter-git-main-advs-projects-b750f180.vercel.app/')">
+          <span>🔗</span> Copy Link
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 <strong>My Projects Hub</strong> • Crafted with ❤️ and JavaScript</p>
+  </footer>
+
+  <div id="toast" class="toast">Link copied to clipboard!</div>
+
+  <script>
+    // ============= THEME TOGGLE =============
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    body.setAttribute('data-theme', savedTheme);
+    updateThemeButton(savedTheme);
+    
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeButton(newTheme);
+    });
+    
+    function updateThemeButton(theme) {
+      themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
+      themeToggle.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`);
+    }
+    
+    // ============= MOBILE MENU =============
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    
+    menuToggle.addEventListener('click', () => {
+      mainNav.classList.toggle('mobile-open');
+      menuToggle.textContent = mainNav.classList.contains('mobile-open') ? '✕' : '☰';
+      menuToggle.setAttribute('aria-label', mainNav.classList.contains('mobile-open') 
+        ? 'Close menu' : 'Open menu');
+    });
+    
+    // Close menu when clicking a nav link (mobile)
+    document.querySelectorAll('.top-nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (mainNav.classList.contains('mobile-open')) {
+          mainNav.classList.remove('mobile-open');
+          menuToggle.textContent = '☰';
+          menuToggle.setAttribute('aria-label', 'Open menu');
+        }
+      });
+    });
+    
+    // ============= PROJECT COUNTER & DATE =============
+    document.addEventListener('DOMContentLoaded', () => {
+      // Count projects
+      const projectCount = document.querySelectorAll('.project-card').length;
+      document.getElementById('projectCount').textContent = projectCount;
+      
+      // Set last updated date
+      const today = new Date();
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      document.getElementById('lastUpdated').textContent = today.toLocaleDateString('en-US', options);
+      
+      // Initialize theme
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      body.setAttribute('data-theme', savedTheme);
+      updateThemeButton(savedTheme);
+    });
+    
+    // ============= SEARCH & FILTER =============
+    document.getElementById('searchInput').addEventListener('keyup', filterProjects);
+    document.getElementById('categoryFilter').addEventListener('change', filterProjects);
+    
+    function filterProjects() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const category = document.getElementById('categoryFilter').value;
+      const cards = document.querySelectorAll('.project-card');
+      
+      cards.forEach(card => {
+        const title = card.querySelector('h2').textContent.toLowerCase();
+        const desc = card.querySelector('p').textContent.toLowerCase();
+        const tags = card.getAttribute('data-tags') || '';
+        const cardCategory = card.getAttribute('data-category');
+        
+        const matchesSearch = title.includes(searchTerm) || 
+                             desc.includes(searchTerm) || 
+                             tags.includes(searchTerm);
+        const matchesCategory = category === 'all' || cardCategory === category;
+        
+        card.style.display = (matchesSearch && matchesCategory) ? 'flex' : 'none';
+      });
+    }
+    
+    // ============= APP FUNCTIONS =============
+    function openApp(url) {
+      const cleanUrl = url.trim();
+      if (cleanUrl) {
+        window.open(cleanUrl, '_blank', 'noopener,noreferrer');
+      }
+    }
+    
+    function copyUrl(url) {
+      const cleanUrl = url.trim();
+      if (!cleanUrl) return;
+      
+      navigator.clipboard.writeText(cleanUrl).then(() => {
+        showToast();
+      }).catch(err => {
+        console.error('Failed to copy:', err);
+        alert('Link copied to clipboard!');
+      });
+    }
+    
+    // ============= TOAST NOTIFICATION =============
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.classList.remove('show');
+      
+      // Trigger reflow to restart animation
+      void toast.offsetWidth;
+      
+      toast.classList.add('show');
+      
+      // Auto hide after 3 seconds
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Close mobile menu when clicking outside (on larger screens)
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth > 768) return;
+      
+      if (!mainNav.contains(e.target) && 
+          !menuToggle.contains(e.target) && 
+          mainNav.classList.contains('mobile-open')) {
+        mainNav.classList.remove('mobile-open');
+        menuToggle.textContent = '☰';
+        menuToggle.setAttribute('aria-label', 'Open menu');
+      }
+    });
+  </script>
+</body>
+</html>
